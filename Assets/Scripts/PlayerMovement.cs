@@ -32,14 +32,25 @@ public class PlayerMovement : MonoBehaviour
         change = Vector3.zero;
         change.x = Input.GetAxisRaw("Horizontal");
         change.y = Input.GetAxisRaw("Vertical");
-        if(Input.GetButtonDown("attack")) 
+        if (Input.GetButtonDown("attack") && currentState != PlayerState.attack) 
         {
-
+            StartCoroutine(AttackCo());
         }
-        if (currentState == PlayerState.walk)
+        else if (currentState == PlayerState.walk)
         {
             UpdateAnimationAndMove();
         }
+    }
+
+    private IEnumerator AttackCo() 
+    {
+        animator.SetBool("attacking", true);
+        currentState = PlayerState.attack;
+        yield return null;
+        animator.SetBool("attacking", false);
+        //our attack animation is 1/3 of a second
+        yield return new WaitForSeconds(.3f); 
+        currentState = PlayerState.walk;
     }
 
     void UpdateAnimationAndMove() 
